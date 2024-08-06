@@ -29,7 +29,7 @@ func (apiCfg *ApiConfig) HandlerCreateFeedFollow(w http.ResponseWriter, r *http.
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
-		UserID:    user.ApiKey,
+		UserID:    user.ID,
 		FeedID:    params.FeedID,
 	})
 
@@ -42,7 +42,7 @@ func (apiCfg *ApiConfig) HandlerCreateFeedFollow(w http.ResponseWriter, r *http.
 }
 
 func (apiCfg *ApiConfig) HandlerGetFeedFollows(w http.ResponseWriter, r *http.Request, user database.User) {
-	feedFollows, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ApiKey)
+	feedFollows, err := apiCfg.DB.GetFeedFollows(r.Context(), user.ID)
 
 	if err != nil {
 		utils.RespondWithError(w, 400, fmt.Sprintf("Couldn't get feed follows: %v", err))
@@ -61,7 +61,7 @@ func (apiCfg *ApiConfig) HandlerDeleteFeedFollows(w http.ResponseWriter, r *http
 
 	err = apiCfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
 		ID:     feedFollowID,
-		UserID: user.ApiKey,
+		UserID: user.ID,
 	})
 
 	if err != nil {
