@@ -6,12 +6,13 @@ import (
 	"github.com/yuanzix/rss_aggregator/handlers"
 )
 
-func InitializeRoutes() *http.ServeMux {
+func InitializeRoutes(apiCfg handlers.ApiConfig) *http.ServeMux {
 	router := http.NewServeMux()
 
 	v1Router := http.NewServeMux()
 	v1Router.HandleFunc("/health", handlers.HandlerReadiness)
 	v1Router.HandleFunc("/err", handlers.HandlerErr)
+	v1Router.HandleFunc("/users", apiCfg.HandlerCreateUser)
 
 	router.Handle("/v1/", http.StripPrefix("/v1", v1Router))
 

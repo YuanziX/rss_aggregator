@@ -1,3 +1,6 @@
 .vscode/
+vendor/
 .env
+
+# Executable and database file
 rss_aggregator*
