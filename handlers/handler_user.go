@@ -44,7 +44,7 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	utils.RespondWithJSON(w, 200, user)
+	utils.RespondWithJSON(w, 200, utils.DatabaseUserToUser(user))
 }
 
 func generateRandomSha256Hex() string {
