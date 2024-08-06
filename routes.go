@@ -12,7 +12,7 @@ func InitializeRoutes(apiCfg handlers.ApiConfig) *http.ServeMux {
 	v1Router := http.NewServeMux()
 	v1Router.HandleFunc("/health", handlers.HandlerReadiness)
 	v1Router.HandleFunc("/err", handlers.HandlerErr)
-	v1Router.HandleFunc("/users", apiCfg.HandlerCreateUser)
+	v1Router.HandleFunc("/users", apiCfg.HandleUser)
 
 	router.Handle("/v1/", http.StripPrefix("/v1", v1Router))
 
