@@ -1,9 +1,6 @@
 package handlers
 
 import (
-	"crypto/rand"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,9 +11,10 @@ import (
 	"github.com/yuanzix/rss_aggregator/utils"
 )
 
-func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
+		URL  string `json:"url"`
 	}
 
 	decoder := json.NewDecoder(r.Body)
@@ -28,33 +26,30 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Name:      params.Name,
-		ApiKey:    generateRandomSha256Hex(),
+		Url:       params.URL,
+		UserID:    user.ID,
 	})
+
 	if err != nil {
 		utils.RespondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
 		return
 	}
 
-	utils.RespondWithJSON(w, 201, utils.DatabaseUserToUser(user))
+	utils.RespondWithJSON(w, 201, utils.DatabaseFeedToFeed(feed))
 }
 
-func generateRandomSha256Hex() string {
-	randomBytes := make([]byte, 32)
-	_, err := rand.Read(randomBytes)
+func (apiCfg *ApiConfig) HandlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := apiCfg.DB.GetFeeds(r.Context())
+
 	if err != nil {
-		panic(err)
+		utils.RespondWithError(w, 400, fmt.Sprintf("Couldn't get feeds: %v", err))
+		return
 	}
 
-	hash := sha256.Sum256(randomBytes)
-
-	return hex.EncodeToString(hash[:])
-}
-
-func (apiCfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
-	utils.RespondWithJSON(w, 200, utils.DatabaseUserToUser(user))
+	utils.RespondWithJSON(w, 200, utils.DatabaseFeedsToFeeds(feeds))
 }
