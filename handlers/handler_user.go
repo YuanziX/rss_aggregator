@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -57,4 +58,21 @@ func generateRandomSha256Hex() string {
 
 func (apiCfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.Request, user database.User) {
 	utils.RespondWithJSON(w, 200, utils.DatabaseUserToUser(user))
+}
+
+func (apiCfg *ApiConfig) HandlerGetPostsForUser(w http.ResponseWriter, r *http.Request, user database.User) {
+	log.Printf("Getting posts for user %s", user.ID)
+	posts, err := apiCfg.DB.GetPostsForUser(r.Context(), database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10,
+	})
+
+	if err != nil {
+		utils.RespondWithError(w, 500, fmt.Sprintf("Error getting posts: %v", err))
+		return
+	}
+
+	log.Printf("Got %d posts", len(posts))
+
+	utils.RespondWithJSON(w, 200, utils.DatabasePostsToPosts(posts))
 }

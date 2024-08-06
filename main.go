@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
@@ -35,6 +36,8 @@ func main() {
 	apiCfg := handlers.ApiConfig{
 		DB: queries,
 	}
+
+	go utils.StartScraping(queries, 10, time.Minute)
 
 	router := InitializeRoutes(apiCfg)
 

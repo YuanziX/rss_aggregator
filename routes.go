@@ -20,6 +20,8 @@ func InitializeRoutes(apiCfg handlers.ApiConfig) *http.ServeMux {
 	v1Router.HandleFunc("GET /feeds", apiCfg.HandlerGetFeeds)
 	v1Router.HandleFunc("POST /feeds", apiCfg.MiddlewareAuth(apiCfg.HandlerCreateFeed))
 
+	v1Router.HandleFunc("GET /posts", apiCfg.MiddlewareAuth(apiCfg.HandlerGetPostsForUser))
+
 	v1Router.HandleFunc("GET /feed_follows", apiCfg.MiddlewareAuth(apiCfg.HandlerGetFeedFollows))
 	v1Router.HandleFunc("POST /feed_follows", apiCfg.MiddlewareAuth(apiCfg.HandlerCreateFeedFollow))
 	v1Router.HandleFunc("DELETE /feed_follows/{feedFollowID}", apiCfg.MiddlewareAuth(apiCfg.HandlerDeleteFeedFollows))
