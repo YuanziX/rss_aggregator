@@ -17,6 +17,14 @@ type Feed struct {
 	UserID    interface{}
 }
 
+type FeedFollow struct {
+	ID        interface{}
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	UserID    interface{}
+	FeedID    interface{}
+}
+
 type User struct {
 	ID        interface{}
 	CreatedAt time.Time
